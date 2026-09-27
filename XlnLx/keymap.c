@@ -141,7 +141,7 @@ combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, KC_LEFT_GUI),
     COMBO(combo1, KC_RIGHT_GUI),
     COMBO(combo2, TO(7)),
-    COMBO(combo3, KC_TRANSPARENT),
+    COMBO(combo3, KC_MS_BTN1),
     COMBO_ACTION(combo4),
     COMBO_ACTION(combo5),
 };
