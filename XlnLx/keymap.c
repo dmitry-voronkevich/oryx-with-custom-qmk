@@ -102,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [APP_SWITCH_LAYER] = LAYOUT_voyager(
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
-    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_DOWN,        KC_UP,          KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_TAB,         LSFT(KC_TAB),   KC_NO,          KC_NO,          KC_NO,
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
                                                     KC_NO,          KC_NO,                                         KC_NO,          KC_NO
   ),
@@ -129,6 +129,12 @@ combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo3, KC_TRANSPARENT),
     COMBO_ACTION(combo4),
 };
+
+// Keep tracking T+V against layer 0 while the transient layer is active.
+// Otherwise the KC_NO entries on that layer hide the combo's source keys.
+uint8_t combo_ref_from_layer(uint8_t layer) {
+  return layer == APP_SWITCH_LAYER ? 0 : layer;
+}
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
   if (combo_index != 4) {
