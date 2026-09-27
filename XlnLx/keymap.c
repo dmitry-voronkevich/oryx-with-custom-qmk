@@ -29,13 +29,13 @@ enum custom_keycodes {
 
 
 
-#define DUAL_FUNC_0 LT(11, KC_F18)
-#define DUAL_FUNC_1 LT(10, KC_O)
-#define DUAL_FUNC_2 LT(14, KC_F15)
-#define DUAL_FUNC_3 LT(3, KC_F)
-#define DUAL_FUNC_4 LT(14, KC_F23)
-#define DUAL_FUNC_5 LT(15, KC_B)
-#define DUAL_FUNC_6 LT(2, KC_F24)
+#define DUAL_FUNC_0 LT(14, KC_D)
+#define DUAL_FUNC_1 LT(8, KC_8)
+#define DUAL_FUNC_2 LT(9, KC_F18)
+#define DUAL_FUNC_3 LT(9, KC_9)
+#define DUAL_FUNC_4 LT(6, KC_F5)
+#define DUAL_FUNC_5 LT(15, KC_0)
+#define DUAL_FUNC_6 LT(14, KC_H)
 
 // Held while the T+V app-switcher combo is active.
 #define APP_SWITCH_LAYER 8
