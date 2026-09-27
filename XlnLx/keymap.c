@@ -136,6 +136,7 @@ const uint16_t PROGMEM combo2[] = { KC_1, KC_2, COMBO_END};
 const uint16_t PROGMEM combo3[] = { KC_S, KC_T, COMBO_END};
 const uint16_t PROGMEM combo4[] = { KC_T, MT(MOD_LSFT, KC_V), COMBO_END};
 const uint16_t PROGMEM combo5[] = { KC_D, KC_B, COMBO_END};
+const uint16_t PROGMEM combo6[] = { KC_R, KC_T, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, KC_LEFT_GUI),
@@ -144,6 +145,7 @@ combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo3, KC_MS_BTN1),
     COMBO_ACTION(combo4),
     COMBO_ACTION(combo5),
+    COMBO(combo6, KC_MS_BTN2),
 };
 
 // Keep tracking source combos against layer 0 while a transient layer is active.
