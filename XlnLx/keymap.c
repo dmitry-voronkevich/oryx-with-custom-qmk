@@ -142,14 +142,14 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
   }
 
   if (pressed) {
-    // Weak mods do not disturb a Command key that may already be held.
-    add_weak_mods(MOD_BIT(KC_LGUI));
+    // Use a real modifier: QMK clears weak modifiers while processing combos.
+    register_mods(MOD_BIT(KC_LGUI));
     send_keyboard_report();
     tap_code(KC_TAB);
     layer_on(APP_SWITCH_LAYER);
   } else {
     layer_off(APP_SWITCH_LAYER);
-    del_weak_mods(MOD_BIT(KC_LGUI));
+    unregister_mods(MOD_BIT(KC_LGUI));
     send_keyboard_report();
   }
 }
