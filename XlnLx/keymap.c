@@ -37,6 +37,9 @@ enum custom_keycodes {
 #define DUAL_FUNC_5 LT(15, KC_B)
 #define DUAL_FUNC_6 LT(2, KC_F24)
 
+// Held while the T+V app-switcher combo is active.
+#define APP_SWITCH_LAYER 8
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     TOGGLE_SCROLL,  KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           DUAL_FUNC_0,    
@@ -94,6 +97,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
+  // While T+V is held, Command remains down for macOS's app switcher.
+  // These are the physical Colemak N and E keys, respectively.
+  [APP_SWITCH_LAYER] = LAYOUT_voyager(
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_DOWN,        KC_UP,          KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
+                                                    KC_NO,          KC_NO,                                         KC_NO,          KC_NO
+  ),
 };
 
 const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT(
@@ -108,13 +120,33 @@ const uint16_t PROGMEM combo0[] = { MT(MOD_LSFT, KC_BSPC), LT(2, KC_DELETE), COM
 const uint16_t PROGMEM combo1[] = { LT(1, KC_ENTER), MT(MOD_RSFT, KC_SPACE), COMBO_END};
 const uint16_t PROGMEM combo2[] = { KC_1, KC_2, COMBO_END};
 const uint16_t PROGMEM combo3[] = { KC_S, KC_T, COMBO_END};
+const uint16_t PROGMEM combo4[] = { KC_T, MT(MOD_LSFT, KC_V), COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, KC_LEFT_GUI),
     COMBO(combo1, KC_RIGHT_GUI),
     COMBO(combo2, TO(7)),
     COMBO(combo3, KC_TRANSPARENT),
+    COMBO_ACTION(combo4),
 };
+
+void process_combo_event(uint16_t combo_index, bool pressed) {
+  if (combo_index != 4) {
+    return;
+  }
+
+  if (pressed) {
+    // Weak mods do not disturb a Command key that may already be held.
+    add_weak_mods(MOD_BIT(KC_LGUI));
+    send_keyboard_report();
+    tap_code(KC_TAB);
+    layer_on(APP_SWITCH_LAYER);
+  } else {
+    layer_off(APP_SWITCH_LAYER);
+    del_weak_mods(MOD_BIT(KC_LGUI));
+    send_keyboard_report();
+  }
+}
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
