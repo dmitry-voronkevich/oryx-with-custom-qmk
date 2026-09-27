@@ -39,6 +39,11 @@ enum custom_keycodes {
 
 // Held while the T+V app-switcher combo is active.
 #define APP_SWITCH_LAYER 8
+// Held while the D+B tab-switcher combo is active.
+#define TAB_SWITCH_LAYER 9
+
+#define APP_SWITCH_COMBO 4
+#define TAB_SWITCH_COMBO 5
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -106,6 +111,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
                                                     KC_NO,          KC_NO,                                         KC_NO,          KC_NO
   ),
+  // While D+B is held, Control remains down for application tab switching.
+  // These are the physical Colemak N and E keys, respectively.
+  [TAB_SWITCH_LAYER] = LAYOUT_voyager(
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_TAB,         LSFT(KC_TAB),   KC_NO,          KC_NO,          KC_NO,
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
+                                                    KC_NO,          KC_NO,                                         KC_NO,          KC_NO
+  ),
 };
 
 const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT(
@@ -121,6 +135,7 @@ const uint16_t PROGMEM combo1[] = { LT(1, KC_ENTER), MT(MOD_RSFT, KC_SPACE), COM
 const uint16_t PROGMEM combo2[] = { KC_1, KC_2, COMBO_END};
 const uint16_t PROGMEM combo3[] = { KC_S, KC_T, COMBO_END};
 const uint16_t PROGMEM combo4[] = { KC_T, MT(MOD_LSFT, KC_V), COMBO_END};
+const uint16_t PROGMEM combo5[] = { KC_D, KC_B, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, KC_LEFT_GUI),
@@ -128,28 +143,29 @@ combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo2, TO(7)),
     COMBO(combo3, KC_TRANSPARENT),
     COMBO_ACTION(combo4),
+    COMBO_ACTION(combo5),
 };
 
-// Keep tracking T+V against layer 0 while the transient layer is active.
+// Keep tracking source combos against layer 0 while a transient layer is active.
 // Otherwise the KC_NO entries on that layer hide the combo's source keys.
 uint8_t combo_ref_from_layer(uint8_t layer) {
-  return layer == APP_SWITCH_LAYER ? 0 : layer;
+  return (layer == APP_SWITCH_LAYER || layer == TAB_SWITCH_LAYER) ? 0 : layer;
 }
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
-  if (combo_index != 4) {
+  if (combo_index != APP_SWITCH_COMBO && combo_index != TAB_SWITCH_COMBO) {
     return;
   }
 
   if (pressed) {
     // Use a real modifier: QMK clears weak modifiers while processing combos.
-    register_mods(MOD_BIT(KC_LGUI));
+    register_mods(combo_index == APP_SWITCH_COMBO ? MOD_BIT(KC_LGUI) : MOD_BIT(KC_LCTL));
     send_keyboard_report();
     tap_code(KC_TAB);
-    layer_on(APP_SWITCH_LAYER);
+    layer_on(combo_index == APP_SWITCH_COMBO ? APP_SWITCH_LAYER : TAB_SWITCH_LAYER);
   } else {
-    layer_off(APP_SWITCH_LAYER);
-    unregister_mods(MOD_BIT(KC_LGUI));
+    layer_off(combo_index == APP_SWITCH_COMBO ? APP_SWITCH_LAYER : TAB_SWITCH_LAYER);
+    unregister_mods(combo_index == APP_SWITCH_COMBO ? MOD_BIT(KC_LGUI) : MOD_BIT(KC_LCTL));
     send_keyboard_report();
   }
 }
