@@ -3,7 +3,7 @@
 #define QUICK_TAP_TERM 0
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "XlnLx/ZPjGjr"
+#define SERIAL_NUMBER "XlnLx/Xbpxdy"
 #define LAYER_STATE_16BIT
 #define COMBO_COUNT 4
 
